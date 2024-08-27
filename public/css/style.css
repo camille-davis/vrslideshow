@@ -534,3 +534,16 @@ a.selector:focus .button,
 a.selected .button {
   opacity: 1;
 }*/
+
+/* Placeholder page */
+
+.placeholder .content {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.placeholder h1 img {
+  max-width: 30rem;
+}
