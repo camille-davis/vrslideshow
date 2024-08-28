@@ -63,7 +63,6 @@ input,
 button,
 p,
 fieldset,
-.select-slideshow,
 .tos {
   margin-bottom: var(--padding-small);
 }
@@ -84,11 +83,6 @@ input:not([type="radio"]):not([type="checkbox"]) {
   background: var(--dark-two);
   outline: .2rem solid var(--basic-color);
   text-align: center;
-}
-
-.premium textarea,
-.premium input:not([type="radio"]):not([type="checkbox"]) {
-  outline-color: var(--premium-color);
 }
 
 input[type="radio"],
@@ -114,9 +108,16 @@ input[type="checkbox"] {
   margin-right: var(--padding-small);
 }
 
+.premium textarea,
+.premium input:not([type="radio"]):not([type="checkbox"]),
+.premium input[type="radio"],
+.premium input[type="checkbox"] {
+  outline-color: var(--premium-color);
+}
+
 input[type="radio"]:hover,
 input[type="checkbox"]:hover,
-.radio label:hover
+.radio label:hover,
 .checkbox label:hover {
   cursor: pointer;
 }
@@ -142,6 +143,7 @@ label:not(.small),
 button[type="submit"] {
   font-size: 2.4rem;
   font-family: var(--heading-font);
+  letter-spacing: .01em;
   text-transform: none;
 }
 
@@ -229,10 +231,16 @@ h2 {
 
 /* _Useful Classes */
 
+.visually-hidden {
+  overflow: hidden;
+  height: 0;
+  width: 0;
+}
+
 .flex {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .required {
@@ -241,14 +249,10 @@ h2 {
   margin-left: .8rem;
 }
 
-.radio {
-  align-items: flex-start;
-}
-
 .checkbox {
-  flex-wrap: nowrap !important;
   text-align: left;
   margin-bottom: var(--padding-small);
+  flex-wrap: nowrap;
 }
 
 @keyframes spin {
@@ -316,47 +320,60 @@ main {
 
 /* _Slideshow Type */
 
-.select-slideshow button {
+.slideshow-type {
+  display: flex;
+  justify-content: center;
+}
+
+.slideshow-type .radio {
+  margin: 0 var(--padding-small) var(--padding-medium);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.slideshow-type label {
   text-transform: none;
   width: 16rem;
   padding: 1.2rem .4rem var(--padding-small);
-  margin: 0 var(--padding-small) var(--padding-medium) !important;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: .8rem;
 }
 
-.select-slideshow button[aria-checked="true"]::after {
-  content: '';
-  background: #000 url('/img/checkmark.png') no-repeat top .9rem center / 2rem;
-  filter: invert(100);
-  position: absolute;
-  bottom: -1rem;
-  right: -1rem;
-  height: 3.2rem;
-  width: 3.2rem;
-  border-radius: 50%;
-}
-
-.select-slideshow .type {
+.slideshow-type .type {
   font-family: var(--heading-font);
   font-size: 3rem;
   letter-spacing: .01em;
   line-height: 1.3;
 }
 
-.select-slideshow .price {
+.slideshow-type .price {
   font-size: 1.8rem;
 }
 
-.select-slideshow .dollar {
+.slideshow-type .dollar {
   font-size: 2rem;
 }
 
-#select-basic {
+label[for="select-basic"] {
   background-color: var(--basic-color);
 }
 
-#select-premium {
+label[for="select-premium"] {
   background-color: var(--premium-color);
+}
+
+.slideshow-type input {
+  margin: 1.6rem 0 0;
+}
+
+#select-basic {
+  outline: .2rem solid var(--basic-color);
+}
+
+#select-premium {
+  outline: .2rem solid var(--premium-color);
 }
 
 /* _Alerts and Errors */

@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel=stylesheet href="/css/style.css">
+        @vite(['resources/css/app.css'])
         <title>VR Slideshow</title>
     </head>
     <body class="placeholder">

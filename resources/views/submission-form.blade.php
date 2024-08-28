@@ -3,7 +3,6 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel=stylesheet href="/css/style.css">
         <title>VR Slideshow</title>
         @vite(['resources/css/app.css'])
     </head>
@@ -21,18 +20,25 @@
                 <div class="inner">
                     <div class="content">
                         <h2>Build Your Slideshow</h2>
-                        <div class="flex select-slideshow" role="radiogroup" aria-label="Slideshow type">
-                            <button id="select-basic" role="radio" aria-checked="true">
-                                <span class="type">Basic</span>
-                                <span class="price"><span class="dollar">$</span>49</span>
-                                <span>10 images</span>
-                            </button>
-                            <button id="select-premium" role="radio" aria-checked="false">
-                                <span class="type">Premium</span>
-                                <span class="price"><span class="dollar">$</span>99</span>
-                                <span>20 images</span>
-                            </button>
-                        </div>
+                        <fieldset class="slideshow-type">
+                            <legend class="visually-hidden">Select slideshow type</legend>
+                            <div class="radio">
+                                <label for="select-basic" class="small">
+                                    <span class="type">Basic</span>
+                                    <span class="price"><span class="dollar">$</span>49</span>
+                                    <span>10 images</span>
+                                </label>
+                                <input type="radio" id="select-basic" name="slideshow-type" value="basic" checked />
+                            </div>
+                            <div class="radio">
+                                <label for="select-premium" class="small">
+                                    <span class="type">Premium</span>
+                                    <span class="price"><span class="dollar">$</span>99</span>
+                                    <span>20 images</span>
+                                </label>
+                                <input type="radio" id="select-premium" name="slideshow-type" value="premium" />
+                            </div>
+                        </fieldset>
                         <label for="slideshow-title">Title</label>
                         <input name="slideshow-title" id="slideshow-title" type="text" placeholder="My Slideshow">
                         <label for="slideshow-opening-text">Opening Text</label>
@@ -50,7 +56,7 @@
                         <fieldset class="flex">
                             <div><legend>Contact me by:</legend></div>
                             <div class="flex radio">
-                                <input type="radio" id="contact-email" name="contact" value="email">
+                                <input type="radio" id="contact-email" name="contact" value="email" checked />
                                 <label for="contact-email" class="small">Email</label>
                             </div>
                             <div class="flex radio">
@@ -59,9 +65,9 @@
                             </div>
                         </fieldset>
                         <label for="email">Email<span class="required">(required)</span></label>
-                        <input required name="email" id="email" type="email" placeholder="me@example.com">
-                        <label for="email" style="display:none;">Phone:</label>
-                        <input name="phone" id="phone" type="tel" placeholder="123-456-7890" style="display:none;">
+                        <input required name="email" id="email" type="email" placeholder="me@example.com" class="contact-info" />
+                        <label for="text" style="display:none;">Phone<span class="required">(required)</span></label>
+                        <input name="text" id="text" type="tel" placeholder="123-456-7890" class="contact-info" style="display:none;" />
                     </div><!-- .content -->
                 </div><!-- .inner -->
             </div><!-- .section -->
