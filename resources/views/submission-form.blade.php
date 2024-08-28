@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel=stylesheet href="/css/style.css">
         <title>VR Slideshow</title>
+        @vite(['resources/css/app.css'])
     </head>
     <body>
         <main>
@@ -82,5 +83,6 @@
                 </div><!-- .inner -->
             </div><!-- .section -->
         </main>
+        @vite(['resources/js/app.js'])
     </body>
 </html>
