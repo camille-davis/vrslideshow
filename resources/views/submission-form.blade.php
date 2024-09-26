@@ -44,6 +44,12 @@
                         <label for="slideshow-opening-text">Opening Text</label>
                         <textarea name="slideshow-opening-text" id="slideshow-opening-text" placeholder="My slideshow's opening text"></textarea>
                         <label for="slideshow-images">Images<span class="required">(required)</span></label>
+                        <div id="thumb-preview" class="gallery">
+                            <div class="gallery-item">
+                                <label for="add-images" tabindex="0"><img src="/img/plus.png" alt="Add images" title="Add images"/></label>
+                                <input type='file' id="add-images" multiple />
+                            </div>
+                        </div>
                         <label for="slideshow-closing-text">Closing Text</label>
                         <textarea name="slideshow-closing-text" id="slideshow-closing-text" placeholder="My slideshow's closing text"></textarea>
                     </div><!-- .content -->
