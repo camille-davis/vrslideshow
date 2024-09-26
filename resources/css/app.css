@@ -215,6 +215,10 @@ h3 {
   letter-spacing: .01em;
 }
 
+h2 {
+  text-transform: none;
+}
+
 h1 {
   font-size: 4.2rem;
 }

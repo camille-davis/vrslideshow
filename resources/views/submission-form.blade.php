@@ -12,14 +12,14 @@
                 <div class="inner">
                     <div class="content narrow">
                         <h1 class="title page-title"><img src="/img/vrslideshow_logo.png" alt="VR Slideshow"></h1>
-                        <p>Welcome to the VR Slideshow creator! Just enter your title, beginning and ending text, and upload your images below. Check your email in 3 to 5 days for your VR Slideshow download!</p>
+                        <p>Welcome to the VRslideshow creator! Just enter your title, beginning and ending text, and upload your images below. Check your email in 3 to 5 days for your VR Slideshow download!</p>
                     </div><!-- .content -->
                 </div><!-- .inner -->
             </div><!-- .section -->
             <div class="section">
                 <div class="inner">
                     <div class="content">
-                        <h2>Build Your Slideshow</h2>
+                        <h2>Build Your VRslideshow</h2>
                         <fieldset class="slideshow-type">
                             <legend class="visually-hidden">Select slideshow type</legend>
                             <div class="radio">
@@ -78,11 +78,11 @@
                         <h2 class="tos">Terms and Conditions<span class="required">(required)</span></h2>
                         <div class="flex checkbox">
                             <input required name="copyright" id="copyright" type="checkbox">
-                            <label for="copyright" class="small flex">I own the copyright to my slideshow images, or am otherwise licensed to use them.</label>
+                            <label for="copyright" class="small">I own the copyright to my slideshow images, or am licensed to use them. I have read and agree to the <a href="TODO">terms and conditions</a>.</label>
                         </div>
                         <div class="flex checkbox">
                             <input required name="tos" id="tos" type="checkbox">
-                            <label for="tos" class="small flex">I certify that my slideshow does not contain any violent or pornographic images. I understand that if I submit any violent or pornographic images, the slideshow will not be created, and I will not receive a refund.</label>
+                            <label for="tos" class="small">I certify that my slideshow does not contain any violent or pornographic images. I understand that if I submit any violent or pornographic images, the slideshow will not be created, and I will not receive a refund.</label>
                         </div>
                         <button type="submit">Submit</button>
                     </div><!-- .content -->
