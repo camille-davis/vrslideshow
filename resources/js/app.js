@@ -78,4 +78,12 @@ import $ from 'jquery';
     }
     this.files = dataTransfer.files;
   });
+
+  // Add keyboard functionality to 'add images' input (which is actually a label).
+  $('label[for="add-images"]').on('keypress', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      imageInput.click();
+    }
+  })
 })();
