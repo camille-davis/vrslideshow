@@ -115,13 +115,6 @@ input[type="checkbox"] {
   outline-color: var(--premium-color);
 }
 
-input[type="radio"]:nover,
-input[type="checkbox"]:hover,
-.radio label:hover,
-.checkbox label:hover {
-  cursor: pointer;
-}
-
 input[type="radio"]:checked {
   background-color: var(--link-color);
 }
@@ -151,13 +144,6 @@ label:not(.small) {
   margin-bottom: .8rem;
 }
 
-:focus,
-input:hover,
-textarea:hover,
-button:hover {
-  outline: .3rem solid var(--link-color) !important;
-}
-
 button {
   display: flex;
   flex-direction: column;
@@ -185,12 +171,20 @@ button .svg-inline--fa {
   font-size: 2rem;
 }
 
-button:hover {
+a {
+  color: var(--link-color);
+}
+
+button:hover,
+input[type="radio"]:hover,
+input[type="checkbox"]:hover,
+.radio label:hover,
+label[for="add-images"]:hover {
   cursor: pointer;
 }
 
-a {
-  color: var(--link-color);
+:focus {
+  outline: .3rem solid var(--link-color) !important;
 }
 
 /* _Noninteractive Global */
@@ -445,11 +439,6 @@ label[for="add-images"] {
 
 .premium label[for="add-images"] {
   background: var(--premium-color);
-}
-
-label[for="add-images"]:hover {
-  outline: .3rem solid var(--link-color);
-  cursor: pointer;
 }
 
 label[for="add-images"] img {
