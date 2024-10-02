@@ -46,7 +46,10 @@
                         <label for="slideshow-images">Images<span class="required">(required)</span></label>
                         <div id="thumb-preview" class="gallery">
                             <div class="gallery-item">
-                                <label for="add-images" tabindex="0"><img src="/img/plus.png" alt="Add images" title="Add images"/></label>
+                                <label for="add-images" tabindex="0" class="small flex">
+                                    <img src="/img/plus.png" alt="Add images" title="Add images"/>
+                                    <div class="images-remaining"><span id="images-remaining-number">10</span> images remaining</div>
+                                </label>
                                 <input type='file' id="add-images" multiple />
                             </div>
                         </div>

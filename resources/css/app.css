@@ -7,7 +7,9 @@
   --light-two: #dedede;
   --link-color: #fff;
   --basic-color: #0064ad;
+  --basic-hover: #00477a;
   --premium-color: #941cbf;
+  --premium-hover: #721593;
   --padding-small: 1.6rem;
   --padding-medium: 3.2rem;
   --padding-large: 4rem;
@@ -183,6 +185,14 @@ label[for="add-images"]:hover {
   cursor: pointer;
 }
 
+button:hover {
+  background-color: var(--basic-hover);
+}
+
+.premium button:hover {
+  background-color: var(--premium-hover);
+}
+
 :focus {
   outline: .3rem solid var(--link-color) !important;
 }
@@ -339,6 +349,7 @@ main {
   display: flex;
   flex-direction: column;
   border-radius: .8rem;
+  color: var(--link-color);
 }
 
 .slideshow-type .type {
@@ -357,11 +368,19 @@ main {
 }
 
 label[for="select-basic"] {
-  background-color: var(--basic-color);
+  background: var(--basic-color) !important;
+}
+
+label[for="select-basic"]:hover {
+  background: var(--basic-hover) !important;
 }
 
 label[for="select-premium"] {
-  background-color: var(--premium-color);
+  background: var(--premium-color) !important;
+}
+
+label[for="select-premium"]:hover {
+  background: var(--premium-hover) !important;
 }
 
 .slideshow-type input {
@@ -426,27 +445,38 @@ input[type="file"] {
 }
 
 label[for="add-images"] {
-  border-radius: .8rem;
-  width: 6rem;
-  height: 6rem;
-  display: block;
+  width: 100%;
+  height: 100%;
   outline: transparent;
   position: absolute;
-  top: calc(50% - 3rem);
-  left: calc(50% - 3rem);
-  background: var(--basic-color);
-}
-
-.premium label[for="add-images"] {
-  background: var(--premium-color);
+  background: #222;
+  flex-direction: column;
+  align-items: center;
+  line-height: normal;
+  font-size: 1.4rem;
+  outline-offset: -.3rem;
 }
 
 label[for="add-images"] img {
-  width: 4rem;
-  height: 4rem;
-  object-fit: contain;
-  top: calc(50% - 2rem);
-  left: calc(50% - 2rem);
+  width: 6rem;
+  height: 6rem;
+  position: relative;
+  background: var(--basic-color);
+  padding: 1rem;
+  border-radius: .8rem;
+  margin-bottom: var(--padding-small);
+}
+
+label[for="add-images"]:hover img {
+  background: var(--basic-hover);
+}
+
+.premium label[for="add-images"] img {
+  background: var(--premium-color);
+}
+
+.premium label[for="add-images"]:hover img {
+  background: var(--premium-hover);
 }
 
 /* _Alerts and Errors */
