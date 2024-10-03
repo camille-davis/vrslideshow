@@ -2,17 +2,6 @@ import $ from 'jquery';
 
 (function(){
 
-  // Basic vs Premium
-  if ($('#select-premium:checked').length > 0) {
-    $('body').addClass('premium');
-  }
-  $('#select-premium').on('click', function() {
-    $('body').addClass('premium');
-  });
-  $('#select-basic').on('click', function() {
-    $('body').removeClass('premium');
-  });
-
   // Email vs Text
   const selectContactMethod = (method) => {
     const otherMethod = $(`input.contact-info:not([name="${method}"])`).attr('id');
@@ -21,10 +10,7 @@ import $ from 'jquery';
     $(`[for="${otherMethod}"]`).css('display', 'none');
     $(`[name="${otherMethod}"]`).css('display', 'none')
   }
-  // 'email' is default, so just check if 'text' is checked on load.
-  if ($('#contact-text:checked').length > 0) {
-    selectContactMethod('text');
-  }
+
   $('[name="contact"]').on('click', (event) => {
     selectContactMethod(event.target.value);
   });
@@ -33,7 +19,68 @@ import $ from 'jquery';
 
   const imageInput = document.getElementById('add-images');
 
-  // Display images from FileList.
+  // Updates 'images remaining' label and warning.
+  const updateImagesRemaining = () => {
+
+    // Remove the warning.
+    $('#too-many-images').remove();
+
+    // Get number of images remaining.
+    const premium = $('body').hasClass('premium');
+    let imagesRemaining;
+    if (premium) {
+      imagesRemaining = 20;
+    } else {
+      imagesRemaining = 10;
+    }
+    imagesRemaining -= $('#thumb-preview .thumb').length;
+
+    // If number is negative, display error and set to 0.
+    if (imagesRemaining < 0) {
+      const imagesToRemove = imagesRemaining * -1;
+      let errorText;
+      if ((imagesToRemove === 1) && (premium)) {
+        errorText = 'You have too many images. Please remove 1 image.'
+      } else if (imagesToRemove === 1) {
+        errorText = 'You have too many images.<br />Please remove 1 image, or switch to Premium.'
+      } else if (premium) {
+        errorText = `You have too many images. Please remove ${imagesToRemove} images.`
+      } else {
+        errorText = `You have too many images.<br />Please remove ${imagesToRemove} images, or switch to Premium.`
+      }
+
+      $('#thumb-preview').prepend(`<p role="alert" class="error" id="too-many-images"><img src="/img/warning.png" alt="Warning">${errorText}</p>`);
+      imagesRemaining = 0;
+    }
+
+    // Update 'images remaining' label.
+    if (imagesRemaining === 1) {
+      $('#images-remaining').text('1 image remaining');
+    } else {
+      $('#images-remaining').text(`${imagesRemaining} images remaining`);
+    }
+  }
+
+  const deleteImage = (e) => {
+    const thumb = e.target.closest('.thumb')
+    const deletedIndex = $(thumb).index();
+
+    // Remove file from input.files
+    const dataTransfer = new DataTransfer();
+    const fileArray = $('#add-images')[0].files;
+    for (let i = 0; i < deletedIndex; i++) {
+      dataTransfer.items.add(fileArray[i]);
+    }
+    for (let i = deletedIndex + 1; i < fileArray.length; i++) {
+      dataTransfer.items.add(fileArray[i]);
+    }
+    $('#add-images')[0].files = dataTransfer.files;
+
+    // Update UI.
+    thumb.remove();
+    updateImagesRemaining();
+  }
+
   const displayImages = async (fileList) => {
 
     // Get file data and add it to promise array (to display in correct order).
@@ -49,17 +96,19 @@ import $ from 'jquery';
     // Display images from file data.
     Promise.all(promiseArray).then((fileData) => {
       fileData.forEach((file) => {
-        $(`<div class="gallery-item"><img src="${file}"></div>`).insertBefore($('.gallery-item:last-child'));
+        const thumb = $(`<div class="gallery-item thumb"><img src="${file}"></div>`);
+        const deleteButton = $('<button class="delete"><img src="/img/x.png"></button>');
+        deleteButton.on('click', deleteImage);
+        thumb.append(deleteButton);
+        thumb.insertBefore($('.gallery-item:last-child'));
       })
+
+      // Update 'images remaining' label.
+      updateImagesRemaining();
     });
   }
 
-  // Display any images already present in file input.
-  if ($('#add-images')[0].files.length) {
-    displayImages($('#add-images')[0].files);
-  }
-
-  // Save previously uploaded files to prepend to input.files
+  // Saves previously uploaded files to prepend to input.files
   $(imageInput).on('click', function(e) {
     this.oldFiles = this.files;
   });
@@ -86,4 +135,25 @@ import $ from 'jquery';
       imageInput.click();
     }
   })
+
+  // Basic vs Premium
+  $('#select-premium').on('click', function() {
+    $('body').addClass('premium');
+    updateImagesRemaining();
+  });
+  $('#select-basic').on('click', function() {
+    $('body').removeClass('premium');
+    updateImagesRemaining();
+  });
+
+  // Initialize form state from browser data
+  if ($('#select-premium:checked').length > 0) {
+    $('body').addClass('premium');
+  }
+  if ($('#add-images')[0].files.length) {
+    displayImages($('#add-images')[0].files);
+  }
+  if ($('#contact-text:checked').length > 0) {
+    selectContactMethod('text');
+  }
 })();

@@ -401,16 +401,24 @@ input[type="file"] {
   display: none;
 }
 
+#thumb-preview {
+  padding: var(--padding-small);
+  outline: .2rem solid var(--basic-color);
+  border-radius: .8rem;
+  margin-bottom: calc(var(--padding-small) - .4rem);
+  width: 100%;
+  text-align: left;
+}
+
+.premium #thumb-preview {
+  outline: .2rem solid var(--premium-color);
+}
+
 .gallery {
   display: flex;
   flex-wrap: wrap;
-  padding: var(--padding-small);
-  background: var(--dark-one);
-  border-radius: .8rem;
-  padding: var(--padding-small);
   margin: -.4rem;
   width: calc(100% + .8rem);
-  margin-bottom: calc(var(--padding-small) - .4rem);
 }
 
 .gallery-item {
@@ -450,11 +458,18 @@ label[for="add-images"] {
   outline: transparent;
   position: absolute;
   background: #222;
+  display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  text-align: center;
   line-height: normal;
   font-size: 1.4rem;
-  outline-offset: -.3rem;
+  padding: 2rem;
+}
+
+label[for="add-images"]:focus {
+  outline: none !important;
 }
 
 label[for="add-images"] img {
@@ -465,6 +480,10 @@ label[for="add-images"] img {
   padding: 1rem;
   border-radius: .8rem;
   margin-bottom: var(--padding-small);
+}
+
+label[for="add-images"]:focus img {
+  outline: .3rem solid var(--link-color);
 }
 
 label[for="add-images"]:hover img {
@@ -479,30 +498,51 @@ label[for="add-images"]:hover img {
   background: var(--premium-hover);
 }
 
+.delete {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-radius: 0 0 0 .4rem;
+  min-width: 3rem;
+  min-height: 3rem;
+}
+
+.delete img {
+  width: 1.8rem;
+  height: 1.8rem;
+}
+
 /* _Alerts and Errors */
 
-/*p[role="alert"] {
+p[role="alert"] {
   padding: var(--padding-small);
-  transition: height .2s, opacity .2s, margin .2s, padding .2s;
   width: 100%;
+  display: flex;
+  align-items: center;
+  border-radius: .8rem;
 }
 
-p.error {
-  background-color: #ffe8ec;
-  color: #e36197;
+p[role="alert"] img {
+  width: 3rem;
+  height: 3rem;
+  filter: invert(49%) sepia(16%) saturate(6710%) hue-rotate(319deg) brightness(79%) contrast(83%);
+  margin-right: var(--padding-small);
 }
 
-p.alert {
+.error {
+  background-color: #ffcfd7;
+  color: #be4d5f;
+}
+
+.alert {
   background-color: #bfe7fb;
-  color: #09608b;
 }
 
-p.success {
+.success {
   background-color: #b5f477;
-  color: #235d24;
 }
 
-#alerts {
+/*#alerts {
   margin-top: var(--nav-height);
   width: 100%;
 }
