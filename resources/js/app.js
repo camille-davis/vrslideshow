@@ -2,7 +2,10 @@ import $ from 'jquery';
 
 (function(){
 
-  // Email vs Text
+  /**
+   * Email vs Text
+   */
+
   const selectContactMethod = (method) => {
     const otherMethod = $(`input.contact-info:not([name="${method}"])`).attr('id');
     $(`[for="${method}"]`).removeAttr('style');
@@ -15,9 +18,9 @@ import $ from 'jquery';
     selectContactMethod(event.target.value);
   });
 
-  // Image thumbnail functionality
-
-  const imageInput = document.getElementById('add-images');
+  /**
+   * Image thumbnail functionality
+   */
 
   // Updates 'images remaining' label and warning.
   const updateImagesRemaining = () => {
@@ -62,23 +65,68 @@ import $ from 'jquery';
   }
 
   const deleteImage = (e) => {
+    e.preventDefault();
     const thumb = e.target.closest('.thumb')
     const deletedIndex = $(thumb).index();
 
     // Remove file from input.files
     const dataTransfer = new DataTransfer();
-    const fileArray = $('#add-images')[0].files;
+    const files = $('#add-images')[0].files;
     for (let i = 0; i < deletedIndex; i++) {
-      dataTransfer.items.add(fileArray[i]);
+      dataTransfer.items.add(files[i]);
     }
-    for (let i = deletedIndex + 1; i < fileArray.length; i++) {
-      dataTransfer.items.add(fileArray[i]);
+    for (let i = deletedIndex + 1; i < files.length; i++) {
+      dataTransfer.items.add(files[i]);
     }
     $('#add-images')[0].files = dataTransfer.files;
 
     // Update UI.
     thumb.remove();
     updateImagesRemaining();
+  }
+
+  // Globals for drag functionality. I wish I could use e.dataTransfer instead
+  // but it would need to be updated in dragover handler which isn't allowed.
+  let selectedThumb, startPos;
+  const resetDrag = () => {
+    selectedThumb = startPos = null;
+  }
+
+  // Remove delay on dragend.
+  $(document).on('dragover', function (e) {
+    e.preventDefault();
+  })
+
+  // Update order of input.files based on start and end position of a given image.
+  const updateImageOrder = (startPos, endPos) => {
+    const dataTransfer = new DataTransfer();
+    const files = $('#add-images')[0].files;
+
+    if (endPos < startPos) {
+      for (let i = 0; i < endPos; i++) {
+        dataTransfer.items.add(files[i]);
+      }
+      dataTransfer.items.add(files[startPos]);
+      for (let i = endPos; i < startPos; i++) {
+        dataTransfer.items.add(files[i]);
+      }
+      for (let i = startPos + 1; i < files.length; i++) {
+        dataTransfer.items.add(files[i]);
+      }
+    } else {
+      for (let i = 0; i < startPos; i++) {
+        dataTransfer.items.add(files[i]);
+      }
+      for (let i = startPos + 1; i <= endPos; i++) {
+        dataTransfer.items.add(files[i]);
+      }
+      dataTransfer.items.add(files[startPos]);
+      for (let i = endPos + 1; i < files.length; i++) {
+        dataTransfer.items.add(files[i]);
+      }
+    }
+
+    $('#add-images')[0].files = dataTransfer.files;
   }
 
   const displayImages = async (fileList) => {
@@ -93,13 +141,56 @@ import $ from 'jquery';
       }));
     }
 
-    // Display images from file data.
+    // Display image thumbnails from file data.
     Promise.all(promiseArray).then((fileData) => {
       fileData.forEach((file) => {
-        const thumb = $(`<div class="gallery-item thumb"><img src="${file}"></div>`);
-        const deleteButton = $('<button class="delete"><img src="/img/x.png"></button>');
+        const thumb = $(`<div class="gallery-item thumb" draggable="true"><img src="${file}" draggable="false" /></div>`);
+
+        // Add 'delete' functionality.
+        const deleteButton = $('<button class="delete thumb-action"><img src="/img/x.png" alt="Delete image" draggable="false" /></button>');
         deleteButton.on('click', deleteImage);
-        thumb.append(deleteButton);
+
+        // Add 'move' functionality.
+        const handIcon = $('<img src="/img/hand_open.png" alt="Move image" draggable="false" />');
+        const moveButton = $('<button class="move thumb-action"></button>').append(handIcon);
+        thumb.on('mousedown', function(e) {
+          if (!e.target.closest('.delete')) {
+            handIcon.attr('src', '/img/hand_closed.png');
+          }
+        })
+        thumb.on('mouseup', function() {
+          handIcon.attr('src', '/img/hand_open.png');
+        })
+        thumb.on('dragstart', function(e) {
+
+          // Set globals.
+          selectedThumb = $(this);
+          startPos = selectedThumb.index();
+        })
+        thumb.on('dragend', function() {
+
+          // Save updated order to input.files
+          const endPos = $(this).index();
+          if (startPos !== endPos) {
+            updateImageOrder(startPos, endPos);
+          }
+
+          // Reset UI and globals.
+          handIcon.attr('src', '/img/hand_open.png');
+          resetDrag();
+        })
+        thumb.on('dragover', function (e) {
+          if (!selectedThumb) {
+            return;
+          }
+          if ($(this).index() < $(selectedThumb).index()) {
+            $(selectedThumb).insertBefore(this);
+            return;
+          }
+          $(selectedThumb).insertAfter(this);
+        });
+
+        thumb.append(deleteButton).append(moveButton);
         thumb.insertBefore($('.gallery-item:last-child'));
       })
 
@@ -109,11 +200,11 @@ import $ from 'jquery';
   }
 
   // Saves previously uploaded files to prepend to input.files
-  $(imageInput).on('click', function(e) {
+  $('#add-images').on('click', function(e) {
     this.oldFiles = this.files;
   });
 
-  $(imageInput).on('change', function(e) {
+  $('#add-images').on('change', function(e) {
     e.preventDefault()
 
     // Display newly added images.
@@ -132,11 +223,14 @@ import $ from 'jquery';
   $('label[for="add-images"]').on('keypress', function(e) {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      imageInput.click();
+      $('#add-images').click();
     }
   })
 
-  // Basic vs Premium
+  /**
+   * Basic vs Premium
+   */
+
   $('#select-premium').on('click', function() {
     $('body').addClass('premium');
     updateImagesRemaining();
@@ -146,7 +240,10 @@ import $ from 'jquery';
     updateImagesRemaining();
   });
 
-  // Initialize form state from browser data
+  /**
+   * Initialize form state from browser data.
+   */
+
   if ($('#select-premium:checked').length > 0) {
     $('body').addClass('premium');
   }

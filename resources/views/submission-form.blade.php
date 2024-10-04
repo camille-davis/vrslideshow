@@ -40,7 +40,7 @@
                             </div>
                         </fieldset>
                         <label for="slideshow-title">Title</label>
-                        <input name="slideshow-title" id="slideshow-title" type="text" placeholder="My Slideshow">
+                        <input name="slideshow-title" id="slideshow-title" type="text" placeholder="My Slideshow" />
                         <label for="slideshow-opening-text">Opening Text</label>
                         <textarea name="slideshow-opening-text" id="slideshow-opening-text" placeholder="My slideshow's opening text"></textarea>
                         <label for="slideshow-images">Images<span class="required">(required)</span></label>
@@ -88,11 +88,11 @@
                         <h2>Payment</h2>
                         <h2 class="tos">Terms and Conditions<span class="required">(required)</span></h2>
                         <div class="flex checkbox">
-                            <input required name="copyright" id="copyright" type="checkbox">
+                            <input required name="copyright" id="copyright" type="checkbox" />
                             <label for="copyright" class="small">I own the copyright to my slideshow images, or am licensed to use them. I have read and agree to the <a href="TODO">terms and conditions</a>.</label>
                         </div>
                         <div class="flex checkbox">
-                            <input required name="tos" id="tos" type="checkbox">
+                            <input required name="tos" id="tos" type="checkbox" />
                             <label for="tos" class="small">I certify that my slideshow does not contain any violent or pornographic images. I understand that if I submit any violent or pornographic images, the slideshow will not be created, and I will not receive a refund.</label>
                         </div>
                         <button type="submit">Submit</button>
