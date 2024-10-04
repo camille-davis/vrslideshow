@@ -435,12 +435,6 @@ input[type="file"] {
 
 @media screen and (width <=767px) {
   .gallery-item {
-    width: calc(33.33% - .8rem);
-  }
-}
-
-@media screen and (width <=420px) {
-  .gallery-item {
     width: calc(50% - .8rem);
   }
 }

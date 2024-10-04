@@ -152,16 +152,65 @@ import $ from 'jquery';
 
         // Add 'move' functionality.
         const handIcon = $('<img src="/img/hand_open.png" alt="Move image" draggable="false" />');
-        const moveButton = $('<button class="move thumb-action"></button>').append(handIcon);
-        thumb.on('mousedown', function(e) {
-          if (!e.target.closest('.delete')) {
-            handIcon.attr('src', '/img/hand_closed.png');
+        const moveButton = $('<button class="move thumb-action" aria-pressed="false"></button>').append(handIcon);
+        moveButton.on('click', function() {
+
+          // Toggle button on or off.
+          if (moveButton.attr('aria-pressed') === 'true') {
+              moveButton.removeAttr('aria-pressed');
+              handIcon.attr('src', '/img/hand_open.png');
+              return;
           }
-        })
-        thumb.on('mouseup', function() {
+          moveButton.attr('aria-pressed', 'true');
+          handIcon.attr('src', '/img/hand_closed.png');
+          moveButton.trigger('focus');
+        });
+        thumb.on('keydown', function(e) {
+          if (e.key === 'Escape') {
+            moveButton.removeAttr('aria-pressed');
+            handIcon.attr('src', '/img/hand_open.png');
+            return;
+          }
+
+          // Arrow key actions.
+          const arrowKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+          if (moveButton.attr('aria-pressed') !== 'true' || !arrowKeys.includes(e.key)) {
+            return;
+          }
+          e.preventDefault();
+          const index = thumb.index();
+          const thumbLength = $('#thumb-preview .thumb').length;
+          let newIndex, interval;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            interval = 1;
+          } else if (window.matchMedia('(min-width: 768px)').matches) {
+            interval = 4;
+          } else {
+            interval = 2;
+          }
+          if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+            newIndex = index - interval;
+            if (newIndex >= 0) {
+              thumb.insertBefore($('#thumb-preview .thumb')[newIndex])
+              updateImageOrder(index, newIndex);
+              moveButton.trigger('focus');
+            }
+            return;
+          }
+          newIndex = index + interval;
+          if (newIndex < thumbLength) {
+            thumb.insertAfter($('#thumb-preview .thumb')[newIndex])
+            updateImageOrder(index, newIndex);
+            moveButton.trigger('focus');
+          }
+        });
+        moveButton.on('blur', function() {
+          moveButton.removeAttr('aria-pressed');
           handIcon.attr('src', '/img/hand_open.png');
-        })
+        });
         thumb.on('dragstart', function(e) {
+          moveButton.attr('aria-pressed', 'true');
+          handIcon.attr('src', '/img/hand_closed.png');
 
           // Set globals.
           selectedThumb = $(this);
@@ -176,23 +225,24 @@ import $ from 'jquery';
           }
 
           // Reset UI and globals.
+          moveButton.removeAttr('aria-pressed');
           handIcon.attr('src', '/img/hand_open.png');
           resetDrag();
-        })
+        });
         thumb.on('dragover', function (e) {
           if (!selectedThumb) {
             return;
           }
-          if ($(this).index() < $(selectedThumb).index()) {
-            $(selectedThumb).insertBefore(this);
+          if ($(this).index() < selectedThumb.index()) {
+            selectedThumb.insertBefore(this);
             return;
           }
-          $(selectedThumb).insertAfter(this);
+          selectedThumb.insertAfter(this);
         });
 
-        thumb.append(deleteButton).append(moveButton);
+        thumb.append(moveButton).append(deleteButton);
         thumb.insertBefore($('.gallery-item:last-child'));
-      })
+      });
 
       // Update 'images remaining' label.
       updateImagesRemaining();
@@ -223,7 +273,7 @@ import $ from 'jquery';
   $('label[for="add-images"]').on('keypress', function(e) {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      $('#add-images').click();
+      $('#add-images').trigger('click');
     }
   })
 
