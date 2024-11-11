@@ -3,22 +3,6 @@ import $ from 'jquery';
 (function(){
 
   /**
-   * Email vs Text
-   */
-
-  const selectContactMethod = (method) => {
-    const otherMethod = $(`input.contact-info:not([name="${method}"])`).attr('id');
-    $(`[for="${method}"]`).removeAttr('style');
-    $(`[name="${method}"]`).removeAttr('style')
-    $(`[for="${otherMethod}"]`).css('display', 'none');
-    $(`[name="${otherMethod}"]`).css('display', 'none')
-  }
-
-  $('[name="contact"]').on('click', (event) => {
-    selectContactMethod(event.target.value);
-  });
-
-  /**
    * Image thumbnail functionality
    */
 
@@ -294,10 +278,9 @@ import $ from 'jquery';
    * Initialize form state from browser data.
    */
 
-  $('input[type="radio"]').on('change', function() {
+  $('input[name="slideshow-type"]').on('change', function() {
     sessionStorage.setItem(this.name, this.value);
   })
-
   let slideshowType = sessionStorage.getItem('slideshow-type') || 'basic';
   if (slideshowType === 'premium') {
     $('#select-premium').prop('checked', 'true');
@@ -306,8 +289,5 @@ import $ from 'jquery';
 
   if ($('#add-images')[0].files.length) {
     displayImages($('#add-images')[0].files);
-  }
-  if ($('#contact-text:checked').length > 0) {
-    selectContactMethod('text');
   }
 })();

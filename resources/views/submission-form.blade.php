@@ -64,21 +64,8 @@
                 <div class="inner">
                     <div class="content narrow">
                         <h2>Contact Info</h2>
-                        <fieldset class="flex">
-                            <div><legend>Contact me by:</legend></div>
-                            <div class="flex radio">
-                                <input type="radio" id="contact-email" name="contact" value="email" checked />
-                                <label for="contact-email" class="small">Email</label>
-                            </div>
-                            <div class="flex radio">
-                                <input type="radio" id="contact-text" name="contact" value="text" />
-                                <label for="contact-text" class="small">Text</label>
-                            </div>
-                        </fieldset>
                         <label for="email">Email<span class="required">(required)</span></label>
-                        <input required name="email" id="email" type="email" placeholder="me@example.com" class="contact-info" />
-                        <label for="text" style="display:none;">Phone<span class="required">(required)</span></label>
-                        <input name="text" id="text" type="tel" placeholder="123-456-7890" class="contact-info" style="display:none;" />
+                        <input required name="email" id="email" type="email" placeholder="me@example.com" />
                     </div><!-- .content -->
                 </div><!-- .inner -->
             </div><!-- .section -->
