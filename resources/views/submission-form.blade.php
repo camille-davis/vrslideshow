@@ -51,7 +51,7 @@
                                         <img src="/img/plus.png" alt="Add images" title="Add images"/>
                                         <div id="images-remaining">10 images remaining</div>
                                     </label>
-                                    <input type='file' id="add-images" multiple />
+                                    <input type='file' id="add-images" name="add-images" multiple />
                                 </div>
                             </div>
                         </div>

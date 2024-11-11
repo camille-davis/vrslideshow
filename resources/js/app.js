@@ -294,9 +294,16 @@ import $ from 'jquery';
    * Initialize form state from browser data.
    */
 
-  if ($('#select-premium:checked').length > 0) {
+  $('input[type="radio"]').on('change', function() {
+    sessionStorage.setItem(this.name, this.value);
+  })
+
+  let slideshowType = sessionStorage.getItem('slideshow-type') || 'basic';
+  if (slideshowType === 'premium') {
+    $('#select-premium').prop('checked', 'true');
     $('body').addClass('premium');
   }
+
   if ($('#add-images')[0].files.length) {
     displayImages($('#add-images')[0].files);
   }
