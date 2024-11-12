@@ -28,7 +28,7 @@
                                     <span class="price"><span class="dollar">$</span>49</span>
                                     <span>10 images</span>
                                 </label>
-                                <input type="radio" id="select-basic" name="slideshow-type" value="basic" checked />
+                                <input type="radio" id="select-basic" name="slideshow-type" value="basic" />
                             </div>
                             <div class="radio">
                                 <label for="select-premium" class="small">

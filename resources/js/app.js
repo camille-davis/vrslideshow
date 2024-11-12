@@ -5,6 +5,7 @@ import $ from 'jquery';
   /**
    * Image thumbnail functionality
    */
+  //console.log(sessionStorage.getItem('files'));
 
   // Updates 'images remaining' label and warning.
   const updateImagesRemaining = () => {
@@ -113,144 +114,139 @@ import $ from 'jquery';
     $('#add-images')[0].files = dataTransfer.files;
   }
 
-  const displayImages = async (fileList) => {
+  const displayImages = (fileData) => {
+    fileData.forEach((file) => {
+      const thumb = $(`<div class="gallery-item thumb" draggable="true"><img src="${file}" draggable="false" /></div>`);
 
-    // Get file data and add it to promise array (to display in correct order).
-    const promiseArray = [];
-    for (var i = 0; i < fileList.length; i++) {
-      let reader = new FileReader();
-      promiseArray.push(new Promise(resolve => {
-        reader.onload = () => resolve(reader.result);
-        reader.readAsDataURL(fileList[i]);
-      }));
-    }
+      // Add 'delete' functionality.
+      const deleteButton = $('<button class="delete thumb-action"><img src="/img/x.png" alt="Delete image" draggable="false" /></button>');
+      deleteButton.on('click', deleteImage);
 
-    // Display image thumbnails from file data.
-    Promise.all(promiseArray).then((fileData) => {
-      fileData.forEach((file) => {
-        const thumb = $(`<div class="gallery-item thumb" draggable="true"><img src="${file}" draggable="false" /></div>`);
+      // Add 'move' functionality.
+      const handIcon = $('<img src="/img/hand_open.png" alt="Move image" draggable="false" />');
+      const moveButton = $('<button class="move thumb-action" aria-pressed="false"></button>').append(handIcon);
+      moveButton.on('click', function() {
 
-        // Add 'delete' functionality.
-        const deleteButton = $('<button class="delete thumb-action"><img src="/img/x.png" alt="Delete image" draggable="false" /></button>');
-        deleteButton.on('click', deleteImage);
-
-        // Add 'move' functionality.
-        const handIcon = $('<img src="/img/hand_open.png" alt="Move image" draggable="false" />');
-        const moveButton = $('<button class="move thumb-action" aria-pressed="false"></button>').append(handIcon);
-        moveButton.on('click', function() {
-
-          // Toggle button on or off.
-          if (moveButton.attr('aria-pressed') === 'true') {
-              moveButton.removeAttr('aria-pressed');
-              handIcon.attr('src', '/img/hand_open.png');
-              return;
-          }
-          moveButton.attr('aria-pressed', 'true');
-          handIcon.attr('src', '/img/hand_closed.png');
-          moveButton.trigger('focus');
-        });
-        thumb.on('keydown', function(e) {
-          if (e.key === 'Escape') {
+        // Toggle button on or off.
+        if (moveButton.attr('aria-pressed') === 'true') {
             moveButton.removeAttr('aria-pressed');
             handIcon.attr('src', '/img/hand_open.png');
             return;
-          }
+        }
+        moveButton.attr('aria-pressed', 'true');
+        handIcon.attr('src', '/img/hand_closed.png');
+        moveButton.trigger('focus');
+      });
+      thumb.on('keydown', function(e) {
+        if (e.key === 'Escape') {
+          moveButton.removeAttr('aria-pressed');
+          handIcon.attr('src', '/img/hand_open.png');
+          return;
+        }
 
-          // Arrow key actions.
-          const arrowKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
-          if (moveButton.attr('aria-pressed') !== 'true' || !arrowKeys.includes(e.key)) {
-            return;
-          }
-          e.preventDefault();
-          const index = thumb.index();
-          const thumbLength = $('#thumb-preview .thumb').length;
-          let newIndex, interval;
-          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-            interval = 1;
-          } else if (window.matchMedia('(min-width: 768px)').matches) {
-            interval = 4;
-          } else {
-            interval = 2;
-          }
-          if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
-            newIndex = index - interval;
-            if (newIndex >= 0) {
-              thumb.insertBefore($('#thumb-preview .thumb')[newIndex])
-              updateImageOrder(index, newIndex);
-              moveButton.trigger('focus');
-            }
-            return;
-          }
-          newIndex = index + interval;
-          if (newIndex < thumbLength) {
-            thumb.insertAfter($('#thumb-preview .thumb')[newIndex])
+        // Arrow key actions.
+        const arrowKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+        if (moveButton.attr('aria-pressed') !== 'true' || !arrowKeys.includes(e.key)) {
+          return;
+        }
+        e.preventDefault();
+        const index = thumb.index();
+        const thumbLength = $('#thumb-preview .thumb').length;
+        let newIndex, interval;
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          interval = 1;
+        } else if (window.matchMedia('(min-width: 768px)').matches) {
+          interval = 4;
+        } else {
+          interval = 2;
+        }
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+          newIndex = index - interval;
+          if (newIndex >= 0) {
+            thumb.insertBefore($('#thumb-preview .thumb')[newIndex])
             updateImageOrder(index, newIndex);
             moveButton.trigger('focus');
           }
-        });
-        moveButton.on('blur', function() {
-          moveButton.removeAttr('aria-pressed');
-          handIcon.attr('src', '/img/hand_open.png');
-        });
-        thumb.on('dragstart', function(e) {
-          moveButton.attr('aria-pressed', 'true');
-          handIcon.attr('src', '/img/hand_closed.png');
+          return;
+        }
+        newIndex = index + interval;
+        if (newIndex < thumbLength) {
+          thumb.insertAfter($('#thumb-preview .thumb')[newIndex])
+          updateImageOrder(index, newIndex);
+          moveButton.trigger('focus');
+        }
+      });
+      moveButton.on('blur', function() {
+        moveButton.removeAttr('aria-pressed');
+        handIcon.attr('src', '/img/hand_open.png');
+      });
+      thumb.on('dragstart', function(e) {
+        moveButton.attr('aria-pressed', 'true');
+        handIcon.attr('src', '/img/hand_closed.png');
 
-          // Set globals.
-          selectedThumb = $(this);
-          startPos = selectedThumb.index();
-        })
-        thumb.on('dragend', function() {
+        // Set globals.
+        selectedThumb = $(this);
+        startPos = selectedThumb.index();
+      })
+      thumb.on('dragend', function() {
 
-          // Save updated order to input.files
-          const endPos = $(this).index();
-          if (startPos !== endPos) {
-            updateImageOrder(startPos, endPos);
-          }
+        // Save updated order to input.files
+        const endPos = $(this).index();
+        if (startPos !== endPos) {
+          updateImageOrder(startPos, endPos);
+        }
 
-          // Reset UI and globals.
-          moveButton.removeAttr('aria-pressed');
-          handIcon.attr('src', '/img/hand_open.png');
-          resetDrag();
-        });
-        thumb.on('dragover', function (e) {
-          if (!selectedThumb) {
-            return;
-          }
-          if ($(this).index() < selectedThumb.index()) {
-            selectedThumb.insertBefore(this);
-            return;
-          }
-          selectedThumb.insertAfter(this);
-        });
-
-        thumb.append(moveButton).append(deleteButton);
-        thumb.insertBefore($('.gallery-item:last-child'));
+        // Reset UI and globals.
+        moveButton.removeAttr('aria-pressed');
+        handIcon.attr('src', '/img/hand_open.png');
+        resetDrag();
+      });
+      thumb.on('dragover', function (e) {
+        if (!selectedThumb) {
+          return;
+        }
+        if ($(this).index() < selectedThumb.index()) {
+          selectedThumb.insertBefore(this);
+          return;
+        }
+        selectedThumb.insertAfter(this);
       });
 
-      // Update 'images remaining' label.
-      updateImagesRemaining();
+      thumb.append(moveButton).append(deleteButton);
+      thumb.insertBefore($('.gallery-item:last-child'));
     });
-  }
 
-  // Saves previously uploaded files to prepend to input.files
-  $('#add-images').on('click', function(e) {
-    this.oldFiles = this.files;
-  });
+    // Update 'images remaining' label.
+    updateImagesRemaining();
+  }
 
   $('#add-images').on('change', function(e) {
     e.preventDefault()
 
-    // Display newly added images.
-    displayImages(this.files);
-
-    // Update input.files to contain both previous and new files.
-    const dataTransfer = new DataTransfer();
-    const fileArray = [...this.oldFiles, ...this.files];
-    for (let i = 0; i < fileArray.length; i++) {
-      dataTransfer.items.add(fileArray[i]);
+    // Get new images as array of base64 strings.
+    console.log(this.files[0]);
+    //displayImages(this.files);
+    return
+    const promiseArray = [];
+    for (var i = 0; i < this.files.length; i++) {
+      let reader = new FileReader();
+      promiseArray.push(new Promise(resolve => {
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(this.files[i]);
+      }));
     }
-    this.files = dataTransfer.files;
+
+    // Display new images and append them to session data.
+    Promise.all(promiseArray).then((fileData) => {
+      displayImages(fileData);
+
+      let files = fileData.join("_");
+      let oldFiles = sessionStorage.getItem('files');
+      if (oldFiles !== null) {
+        files = oldFiles + "_" + files;
+      }
+      sessionStorage.setItem('files', files);
+    });
   });
 
   // Add keyboard functionality to 'add images' input (which is actually a label).
@@ -275,15 +271,43 @@ import $ from 'jquery';
   });
 
   /**
-   * Initialize form state from browser data.
+   * Save and get input data from session.
    */
 
-  $('input[name="slideshow-type"]').on('change', function() {
+  $('input[type="checkbox"]').each(function() {
+    if (sessionStorage.getItem(this.name) === 'true')
+      $(`input[name="${this.name}"]`).prop('checked', 'true');
+  })
+  $('input[type="radio"]').each(function() {
+    const value = sessionStorage.getItem(this.name);
+    $(`input[name="${this.name}"][value="${value}"]`).prop('checked', 'true');
+  })
+  $('input:not([type="radio"]):not([type="checkbox"]):not([type="file"]), textarea').each(function() {
+    const value = sessionStorage.getItem(this.name);
+    if (value !== null) {
+      $(`[name="${this.name}"]`).val(value);
+    }
+  })
+
+  const files = sessionStorage.getItem('files')
+  if (files) {
+    console.log(files.split("_"));
+  }
+
+  $('input[type="checkbox"]').on('change', function() {
+    sessionStorage.setItem(this.name, $(this).is(':checked'));
+  })
+  $('input:not([type="checkbox"]):not([type="file"]), textarea').on('input', function() {
     sessionStorage.setItem(this.name, this.value);
   })
-  let slideshowType = sessionStorage.getItem('slideshow-type') || 'basic';
-  if (slideshowType === 'premium') {
-    $('#select-premium').prop('checked', 'true');
+
+  // Default to Basic slideshow.
+  if ($('input[name="slideshow-type"]:checked').length === 0) {
+    $('input[value="basic"]').prop('checked', 'true');
+  }
+
+  // Update style if Premium.
+  if ($('input[value="premium"]').is(':checked')) {
     $('body').addClass('premium');
   }
 
