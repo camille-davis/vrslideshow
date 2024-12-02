@@ -257,10 +257,26 @@ import $ from 'jquery';
     }
   })
 
-  /**
-   * Basic vs Premium
-   */
+  // Add CSRF token to all requests.
+  $.ajaxSetup({
+      headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+  });
 
+  // Send form data to session, using timeout to avoid continuous requests on input.
+  let timeout;
+  $('input:not([type="file"]), textarea').on('input', function() {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      $.post(`/form`, {key: this.name, value: this.value});
+    }, 2000);
+  })
+  $('input:not([type="file"]), textarea').on('change', function() {
+    $.post(`/form`, {key: this.name, value: this.value});
+  })
+
+  // Update style and 'images remaining' text when selecting slideshow type.
   $('#select-premium').on('click', function() {
     $('body').addClass('premium');
     updateImagesRemaining();
@@ -269,49 +285,4 @@ import $ from 'jquery';
     $('body').removeClass('premium');
     updateImagesRemaining();
   });
-
-  /**
-   * Save and get input data from session.
-   */
-
-  $('input[type="checkbox"]').each(function() {
-    if (sessionStorage.getItem(this.name) === 'true')
-      $(`input[name="${this.name}"]`).prop('checked', 'true');
-  })
-  $('input[type="radio"]').each(function() {
-    const value = sessionStorage.getItem(this.name);
-    $(`input[name="${this.name}"][value="${value}"]`).prop('checked', 'true');
-  })
-  $('input:not([type="radio"]):not([type="checkbox"]):not([type="file"]), textarea').each(function() {
-    const value = sessionStorage.getItem(this.name);
-    if (value !== null) {
-      $(`[name="${this.name}"]`).val(value);
-    }
-  })
-
-  const files = sessionStorage.getItem('files')
-  if (files) {
-    console.log(files.split("_"));
-  }
-
-  $('input[type="checkbox"]').on('change', function() {
-    sessionStorage.setItem(this.name, $(this).is(':checked'));
-  })
-  $('input:not([type="checkbox"]):not([type="file"]), textarea').on('input', function() {
-    sessionStorage.setItem(this.name, this.value);
-  })
-
-  // Default to Basic slideshow.
-  if ($('input[name="slideshow-type"]:checked').length === 0) {
-    $('input[value="basic"]').prop('checked', 'true');
-  }
-
-  // Update style if Premium.
-  if ($('input[value="premium"]').is(':checked')) {
-    $('body').addClass('premium');
-  }
-
-  if ($('#add-images')[0].files.length) {
-    displayImages($('#add-images')[0].files);
-  }
 })();
