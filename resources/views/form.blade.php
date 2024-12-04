@@ -14,6 +14,7 @@
                     <div class="content narrow">
                         <h1 class="title page-title"><img src="/img/vrslideshow_logo.png" alt="VR Slideshow"></h1>
                         <p>Welcome to the VRslideshow creator! Just enter your title, beginning and ending text, and upload your images below. Check your email in 3 to 5 days for your VR Slideshow download!</p>
+                        <p>Images: {{ $images }}</p>
                     </div><!-- .content -->
                 </div><!-- .inner -->
             </div><!-- .section -->
@@ -52,7 +53,7 @@
                                         <img src="/img/plus.png" alt="Add images" title="Add images"/>
                                         <div id="images-remaining">10 images remaining</div>
                                     </label>
-                                    <input type='file' id="add-images" name="add_images" multiple />
+                                    <input type='file' id="add-images" name="images" multiple />
                                 </div>
                             </div>
                         </div>

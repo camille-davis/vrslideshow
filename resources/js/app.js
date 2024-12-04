@@ -221,11 +221,6 @@ import $ from 'jquery';
   }
 
   $('#add-images').on('change', function(e) {
-    e.preventDefault()
-
-    // Get new images as array of base64 strings.
-    console.log(this.files[0]);
-    //displayImages(this.files);
     return
     const promiseArray = [];
     for (var i = 0; i < this.files.length; i++) {
@@ -264,16 +259,42 @@ import $ from 'jquery';
       }
   });
 
+  // Upload new images to server.
+  $('#add-images').on('change', function() {
+
+    // If image too large, show warning.
+    // TODO
+
+    const formData = new FormData();
+    for (var i = 0; i < this.files.length; i++) {
+      formData.append("images[]", this.files[i]);
+    }
+
+    $.ajax({
+      url: '/images',
+      type: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response) {
+        console.log(response);
+      },
+      error: function(error) {
+        console.error(error);
+      }
+    });
+  })
+
   // Send form data to session, using timeout to avoid continuous requests on input.
   let timeout;
   $('input:not([type="file"]), textarea').on('input', function() {
     clearTimeout(timeout);
     timeout = setTimeout(() => {
-      $.post(`/form`, {key: this.name, value: this.value});
+      $.post('/form', {key: this.name, value: this.value});
     }, 2000);
   })
   $('input:not([type="file"]), textarea').on('change', function() {
-    $.post(`/form`, {key: this.name, value: this.value});
+    $.post('/form', {key: this.name, value: this.value});
   })
 
   // Update style and 'images remaining' text when selecting slideshow type.
