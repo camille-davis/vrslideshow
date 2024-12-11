@@ -288,4 +288,10 @@ import $ from 'jquery';
   if ($('input[name="slideshow-type"]:checked').length === 0) {
     $('input[value="basic"]').prop('checked', 'true');
   }
+
+  // If 'Premium' was selected (on browsers that save input data like Firefox),
+  // update style.
+  if ($('#select-premium:checked').length > 0) {
+    $('body').addClass('premium');
+  }
 })();
