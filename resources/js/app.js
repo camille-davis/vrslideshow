@@ -2,6 +2,13 @@ import $ from 'jquery';
 
 (function(){
 
+  // If any input is updated, ask user to confirm if navigating away from age.
+  $('input, textarea').on('change', () => {
+    window.onbeforeunload = () => {
+      return true;
+    };
+  })
+
   /**
    * Image thumbnail functionality
    */
@@ -46,7 +53,7 @@ import $ from 'jquery';
     } else {
       $('#images-remaining').text(`${imagesRemaining} images remaining`);
     }
-  }
+  };
 
   const deleteImage = (e) => {
     e.preventDefault();
@@ -67,19 +74,19 @@ import $ from 'jquery';
     // Update UI.
     thumb.remove();
     updateImagesRemaining();
-  }
+  };
 
   // Globals for drag functionality. Can't use e e.dataTransfer because
   // it would need to be updated in dragover handler which isn't allowed.
   let selectedThumb, startPos;
   const resetDrag = () => {
     selectedThumb = startPos = null;
-  }
+  };
 
   // Remove delay on dragend.
   $(document).on('dragover', function (e) {
     e.preventDefault();
-  })
+  });
 
   // Update order of input.files based on start and end position of a given image.
   const updateImageOrder = (startPos, endPos) => {
@@ -111,7 +118,7 @@ import $ from 'jquery';
     }
 
     $('#add-images')[0].files = dataTransfer.files;
-  }
+  };
 
   // Displays images from FileList and adds delete/move buttons.
   const displayImages = (files) => {
@@ -124,7 +131,7 @@ import $ from 'jquery';
         reader.onload = () => resolve(reader.result);
         reader.readAsDataURL(file);
       }));
-    })
+    });
 
     // Display the new images and add 'delete' and 'move' functionality.
     Promise.all(promiseArray).then((dataUrls) => {
@@ -232,7 +239,7 @@ import $ from 'jquery';
       // Update 'images remaining' label.
       updateImagesRemaining();
     });
-  }
+  };
 
   $('#add-images').on('change', function(e) {
     e.preventDefault();
@@ -262,7 +269,7 @@ import $ from 'jquery';
       e.preventDefault();
       $('#add-images').trigger('click');
     }
-  })
+  });
 
   /**
    * Basic vs Premium Functionality
@@ -276,45 +283,6 @@ import $ from 'jquery';
     $('body').removeClass('premium');
     updateImagesRemaining();
   });
-
-
-  /**
-   * Save input data to browser session, except for images due to cache limits.
-   */
-
-  // Save data on input change.
-  $('input[type="checkbox"]').on('change', function() {
-    sessionStorage.setItem(this.name, $(this).is(':checked'));
-  })
-  $('input:not([type="checkbox"]):not([type="file"]), textarea').on('input', function() {
-    sessionStorage.setItem(this.name, this.value);
-  })
-
-  // Populate inputs on page load.
-  $('input[type="checkbox"]').each(function() {
-    if (sessionStorage.getItem(this.name) === 'true')
-      $(`input[name="${this.name}"]`).prop('checked', 'true');
-  })
-  $('input[type="radio"]').each(function() {
-    const value = sessionStorage.getItem(this.name);
-    $(`input[name="${this.name}"][value="${value}"]`).prop('checked', 'true');
-  })
-  $('input:not([type="radio"]):not([type="checkbox"]):not([type="file"]), textarea').each(function() {
-    const value = sessionStorage.getItem(this.name);
-    if (value !== null) {
-      $(`[name="${this.name}"]`).val(value);
-    }
-  })
-
-  // If file input had files, display them.
-  if ($('#add-images')[0].files.length) {
-    displayImages($('#add-images')[0].files);
-  }
-
-  // Update style if slideshow type is Premium.
-  if ($('input[value="premium"]').is(':checked')) {
-    $('body').addClass('premium');
-  }
 
   // If no slideshow type was selected, default to Basic.
   if ($('input[name="slideshow-type"]:checked').length === 0) {
