@@ -3,7 +3,7 @@ import $ from 'jquery';
 (function(){
 
   // If any input is updated, ask user to confirm if navigating away from age.
-  $('input, textarea').on('change', () => {
+  $('input, textarea').one('input', () => {
     window.onbeforeunload = () => {
       return true;
     };
