@@ -11,7 +11,7 @@
             <div class="section">
                 <div class="inner">
                     <div class="content narrow">
-                        <h1 class="title page-title"><img src="/img/vrslideshow_logo.png" alt="VR Slideshow"></h1>
+                        <h1 class="title page-title"><img src="/img/vrslideshow_logo_beta.png" alt="VR Slideshow Beta"></h1>
                         <p>Coming soon!</p>
                     </div><!-- .content -->
                 </div><!-- .inner -->

@@ -11,8 +11,10 @@
             <div class="section">
                 <div class="inner">
                     <div class="content narrow">
-                        <h1 class="title page-title"><img src="/img/vrslideshow_logo.png" alt="VR Slideshow"></h1>
+                        <h1 class="title page-title"><img src="/img/vrslideshow_logo_beta.png" alt="VR Slideshow Beta"></h1>
+                        <p><em>Only available to registered beta testers.</em></p>
                         <p>Welcome to the VRslideshow creator! Just enter your title, beginning and ending text, and upload your images below. Check your email in 3 to 5 days for your VR Slideshow download!</p>
+                        <p>Fields marked with an asterisk (*) are required.</p>
                     </div><!-- .content -->
                 </div><!-- .inner -->
             </div><!-- .section -->
@@ -20,7 +22,7 @@
                 <div class="inner">
                     <div class="content">
                         <h2>Build Your VRslideshow</h2>
-                        <fieldset class="slideshow-type">
+                        <fieldset class="slideshow-type fullwidth">
                             <legend class="visually-hidden">Select slideshow type</legend>
                             <div class="radio">
                                 <label for="select-basic" class="small">
@@ -39,11 +41,11 @@
                                 <input type="radio" id="select-premium" name="slideshow-type" value="premium" />
                             </div>
                         </fieldset>
-                        <label for="slideshow-title">Title</label>
-                        <input name="slideshow-title" id="slideshow-title" type="text" placeholder="My Slideshow" />
-                        <label for="slideshow-opening-text">Opening Text</label>
+                        <label for="slideshow-title"><span class="main-label">Title</span><span class="sub-label">Up to 50 characters.</span></label>
+                        <input name="slideshow-title" id="slideshow-title" type="text" placeholder="My Slideshow" max="50" />
+                        <label for="slideshow-opening-text"><span class="main-label">Opening Text</span><span class="sub-label">Up to 500 characters.</span></label>
                         <textarea name="slideshow-opening-text" id="slideshow-opening-text" placeholder="My slideshow's opening text"></textarea>
-                        <label for="slideshow-images">Images<span class="required">(required)</span></label>
+                        <label for="slideshow-images"><span class="main-label">Images<span class="required">*</span></span><span class="sub-label">Up to <span class="max-filesize">1GB</span> (combined size).<br />Allowed formats: JPEG, GIF, PNG, TIFF.</span></label>
                         <div id="thumb-preview">
                             <div class="gallery">
                                 <div class="gallery-item">
@@ -51,11 +53,11 @@
                                         <img src="/img/plus.png" alt="Add images" title="Add images"/>
                                         <div id="images-remaining">10 images remaining</div>
                                     </label>
-                                    <input type='file' id="add-images" name="add-images" multiple />
+                                    <input type='file' id="add-images" name="add-images" multiple required accept="image/png, image/jpeg, image/gif, image/tiff" />
                                 </div>
                             </div>
                         </div>
-                        <label for="slideshow-closing-text">Closing Text</label>
+                        <label for="slideshow-closing-text"><span class="main-label">Closing Text</span><span class="sub-label">Up to 500 characters.</span></label>
                         <textarea name="slideshow-closing-text" id="slideshow-closing-text" placeholder="My slideshow's closing text"></textarea>
                     </div><!-- .content -->
                 </div><!-- .inner -->
@@ -63,17 +65,19 @@
             <div class="section">
                 <div class="inner">
                     <div class="content narrow">
-                        <h2>Contact Info</h2>
-                        <label for="email">Email<span class="required">(required)</span></label>
+                        <h2>Details</h2>
+                        <label for="email"><span class="main-label">Email<span class="required">*</span></span></label>
+                        <p>Your VRSlideshow will be sent to this email.</p>
                         <input required name="email" id="email" type="email" placeholder="me@example.com" />
-                    </div><!-- .content -->
+                        <label><span class="main-label">Payment</span></label>
+                        <p>Payment is disabled during beta testing.</p>
+                        </div><!-- .content -->
                 </div><!-- .inner -->
             </div><!-- .section -->
             <div class="section">
                 <div class="inner">
                     <div class="content narrow">
-                        <h2>Payment</h2>
-                        <h2 class="tos">Terms and Conditions<span class="required">(required)</span></h2>
+                        <h2 class="tos flex">Terms and Conditions<span class="required">*</span></h2>
                         <div class="flex checkbox">
                             <input required name="copyright" id="copyright" type="checkbox" />
                             <label for="copyright" class="small">I own the copyright to my slideshow images, or am licensed to use them. I have read and agree to the <a href="TODO">terms and conditions</a>.</label>
@@ -82,7 +86,17 @@
                             <input required name="tos" id="tos" type="checkbox" />
                             <label for="tos" class="small">I certify that my slideshow does not contain any violent or pornographic images. I understand that if I submit any violent or pornographic images, the slideshow will not be created, and I will not receive a refund.</label>
                         </div>
-                        <button type="submit">Submit</button>
+                        </div><!-- .content -->
+                </div><!-- .inner -->
+            </div><!-- .section -->
+            <div class="section">
+                <div class="inner">
+                    <div class="content narrow">
+                        <h2>Generate VRSlideshow</h2>
+                        <label for="secret-code"><span class="main-label">Secret Code<span class="required">*</span></span></label>
+                        <input required name="secret-code" id="secret-code" type="text" placeholder="######" />
+                        <div id="validation-on-submit" class="fullwidth"></div>
+                        <button type="submit" id="submit">Generate!</button>
                     </div><!-- .content -->
                 </div><!-- .inner -->
             </div><!-- .section -->

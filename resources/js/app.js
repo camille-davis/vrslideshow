@@ -7,17 +7,24 @@ import $ from 'jquery';
     window.onbeforeunload = () => {
       return true;
     };
-  })
+  });
+
+  // Add CSRF token to all requests.
+  $.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
 
   /**
    * Image thumbnail functionality
    */
 
-  // Updates 'images remaining' label and warning.
-  const updateImagesRemaining = () => {
+  // Updates image validation warnings.
+  const updateImageValidation = () => {
 
-    // Remove the warning.
-    $('#too-many-images').remove();
+    // Remove image validation warnings in thumbnail area and under Submit button.
+    $('.image-validation-error').remove();
 
     // Get number of images remaining.
     const premium = $('body').hasClass('premium');
@@ -32,18 +39,19 @@ import $ from 'jquery';
     // If number is negative, display error and set to 0.
     if (imagesRemaining < 0) {
       const imagesToRemove = imagesRemaining * -1;
-      let errorText;
+      let errorText = '<p>';
       if ((imagesToRemove === 1) && (premium)) {
-        errorText = 'You have too many images. Please remove 1 image.'
+        errorText += 'You have too many images. Please remove one image.'
       } else if (imagesToRemove === 1) {
-        errorText = 'You have too many images.<br />Please remove 1 image, or switch to Premium.'
+        errorText += 'You have too many images.</p><p>Please remove one image, or switch to Premium.'
       } else if (premium) {
-        errorText = `You have too many images. Please remove ${imagesToRemove} images.`
+        errorText += `You have too many images. Please remove ${imagesToRemove} images.`
       } else {
-        errorText = `You have too many images.<br />Please remove ${imagesToRemove} images, or switch to Premium.`
+        errorText += `You have too many images.</p><p>Please remove ${imagesToRemove} images, or switch to Premium.`
       }
+      errorText += '</p>';
 
-      $('#thumb-preview').prepend(`<p role="alert" class="error" id="too-many-images"><img src="/img/warning.png" alt="Warning">${errorText}</p>`);
+      $('#thumb-preview').prepend(`<div role="alert" class="error image-validation-error"><img src="/img/warning.png" alt="Warning"><div>${errorText}</div></div>`);
       imagesRemaining = 0;
     }
 
@@ -52,6 +60,26 @@ import $ from 'jquery';
       $('#images-remaining').text('1 image remaining');
     } else {
       $('#images-remaining').text(`${imagesRemaining} images remaining`);
+    }
+
+    // Validate combined file size.
+    let size = 0;
+    for (let i = 0; i < $('#add-images')[0].files.length; i++) {
+      size += $('#add-images')[0].files[i].size;
+      let maxBytes, maxText;
+      if ($('body').hasClass('premium')) {
+        // maxBytes = 20971520; // 20MB for testing.
+        maxBytes = 2147483648;
+        maxText = '2GB';
+      } else {
+        // maxBytes = 10485760; // 10MB for testing.
+        maxBytes = 1073741824;
+        maxText = '1GB';
+      }
+      if (size > maxBytes) {
+        $('#thumb-preview').prepend($(`<div role="alert" class="error image-validation-error"><img src="/img/warning.png" alt="Warning"><div>Combined size of images should not exceed <span class="max-filesize">${maxText}</span>.</div></div>`));
+        break;
+      }
     }
   };
 
@@ -73,11 +101,10 @@ import $ from 'jquery';
 
     // Update UI.
     thumb.remove();
-    updateImagesRemaining();
+    updateImageValidation();
   };
 
-  // Globals for drag functionality. Can't use e e.dataTransfer because
-  // it would need to be updated in dragover handler which isn't allowed.
+  // Globals for drag functionality.
   let selectedThumb, startPos;
   const resetDrag = () => {
     selectedThumb = startPos = null;
@@ -236,8 +263,8 @@ import $ from 'jquery';
         thumb.insertBefore($('.gallery-item:last-child'));
       });
 
-      // Update 'images remaining' label.
-      updateImagesRemaining();
+      // Update image validation warnings.
+      updateImageValidation();
     });
   };
 
@@ -258,7 +285,7 @@ import $ from 'jquery';
     this.files = dataTransfer.files;
   });
 
-  // Saves previously uploaded files to prepend to input.files on change.
+  // Save previously uploaded files to prepend to input.files on change.
   $('#add-images').on('click', function (e) {
     this.oldFiles = this.files;
   });
@@ -271,27 +298,116 @@ import $ from 'jquery';
     }
   });
 
+  // If images were saved to session automatically (on Firefox), display them.
+  if ($('#add-images')[0].files.length) {
+    displayImages($('#add-images')[0].files);
+  }
+
   /**
    * Basic vs Premium Functionality
    */
 
   $('#select-premium').on('click', function() {
     $('body').addClass('premium');
-    updateImagesRemaining();
+    $('.max-filesize').text('2GB');
+    updateImageValidation();
   });
   $('#select-basic').on('click', function() {
     $('body').removeClass('premium');
-    updateImagesRemaining();
+    $('.max-filesize').text('1GB');
+    updateImageValidation();
   });
 
   // If no slideshow type was selected, default to Basic.
   if ($('input[name="slideshow-type"]:checked').length === 0) {
-    $('input[value="basic"]').prop('checked', 'true');
+    $('#select-basic').prop('checked', 'true');
   }
 
-  // If 'Premium' was selected (on browsers that save input data like Firefox),
-  // update style.
+  // If page was loaded with 'Premium' selected, run validation and update style.
   if ($('#select-premium:checked').length > 0) {
-    $('body').addClass('premium');
+    $('#select-premium').trigger('click');
   }
+
+  /**
+   * Additional validation (emails and required inputs)
+   */
+
+  // Validates email input.
+  const validateEmail = () => {
+    $('.email-error').remove();
+    const email = $('#email').val();
+    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (email !== '' && !emailRegex.test(email)) {
+      $(`<div role="alert" class="error email-error"><img src="/img/warning.png" alt="Warning"><div>Email format is incorrect.</div></div>`).insertBefore($('#email'));
+    }
+  }
+  $('#email').on('change', validateEmail);
+  validateEmail();
+
+  // If a required input is filled, remove error.
+  $('[required]:not(#copyright):not(#tos)').on('change', function() {
+    $(`#${this.id}-required-error`).remove();
+    if ($('#required-errors p').length === 0) {
+      $('#required-errors').remove();
+    }
+  })
+
+  // If both TOS are checked, remove error.
+  $('#tos,#copyright').on('change', function() {
+    if ($('#tos:checked,#copyright:checked').length === 2) {
+      $('#tos-error').remove();
+    }
+  });
+
+  /**
+   * Beta tester functionality.
+   */
+
+  // Treat pressing 'Enter' on Secret Code field like submitting.
+  $('#secret-code').on('keypress', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      $('#submit').trigger('click');
+    }
+  });
+
+  // On submit, validate then send data.
+  $('#submit').on('click', function() {
+    $('#validation-on-submit').empty();
+
+    // Validate required inputs
+    const required = $('[required]:not(#copyright):not(#tos)');
+    const requiredErrors = [];
+    required.each(function () {
+      if (this.value !== '') {
+        return;
+      }
+      if (this.id === 'add-images') {
+        requiredErrors.push('<p id="add-images-required-error">Images are required.</p>');
+      } else {
+        const label = $(`label[for="${this.id}"]`).text().replace('\*', '');
+        requiredErrors.push(`<p id="${this.id}-required-error">${label} is required.</p>`);
+      }
+    })
+    if (requiredErrors.length > 0) {
+      const requiredText = requiredErrors.join('');
+      $('#validation-on-submit').append($(`<div id="required-errors" role="alert" class="error"><img src="/img/warning.png" alt="Warning"><div>${requiredText}</div></div>`));
+    }
+
+    // Copy any existing validation warnings in page and insert above Submit button.
+    $(':not(#validation-on-submit) > .error').each(function() {
+      $('#validation-on-submit').append($(this).clone());
+    });
+
+    // Validate TOS are checked
+    if ($('#tos:not(:checked),#copyright:not(:checked)').length > 0) {
+      $('#validation-on-submit').append($(`<div id="tos-error" role="alert" class="error"><img src="/img/warning.png" alt="Warning"><div>Please agree to terms and conditions.</div></div>`));
+    }
+
+    // If there's any errors, abort.
+    if ($('.error').length > 0) {
+      return;
+    }
+
+    // Send request TODO
+  });
 })();
