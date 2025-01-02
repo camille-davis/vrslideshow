@@ -6,6 +6,5 @@ Route::get('/', function () {
     return view('placeholder');
 });
 
-Route::get('/wip', function () {
-    return view('submission-form');
-});
+Route::get('/wip', '\App\Http\Controllers\FormController@show');
+Route::post('/form', '\App\Http\Controllers\FormController@save');

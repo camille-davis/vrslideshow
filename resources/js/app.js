@@ -12,7 +12,7 @@ import $ from 'jquery';
   // Add CSRF token to all requests.
   $.ajaxSetup({
     headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        'X-CSRF-TOKEN': $('meta[name="csrf_token"]').attr('content')
     }
   });
 
@@ -319,7 +319,7 @@ import $ from 'jquery';
   });
 
   // If no slideshow type was selected, default to Basic.
-  if ($('input[name="slideshow-type"]:checked').length === 0) {
+  if ($('[name="slideshow_type"]:checked').length === 0) {
     $('#select-basic').prop('checked', 'true');
   }
 
@@ -408,6 +408,32 @@ import $ from 'jquery';
       return;
     }
 
-    // Send request TODO
+    // Send form data.
+    const formData = new FormData();
+    for (let i = 0; i < $('#add-images')[0].files.length; i++) {
+      formData.append('images[]', $('#add-images')[0].files[i]);
+    }
+    console.log(formData);
+/*xhr.send(formData);
+    const data = {
+      'slideshow_type': $('[name="slideshow_type"]:checked').val(),
+      'slideshow_title': $('#slideshow-title').val(),
+      'slideshow_opening_text': $('#slideshow-opening-text').val(),
+      'slideshow_closing_text': $('#slideshow-closing-text').val(),
+      //'images': $('#add-images')[0].files,
+      'email': $('#email').val(),
+      'tos': $('#tos').val(),
+      'copyright': $('#copyright').val(),
+      'secret_code': $('#secret-code').val(),
+    }*/
+    $.ajax({
+      type: 'POST',
+      url: '/form',
+      data: formData,
+      processData: false,
+      success: (response) => {
+        console.log(response);
+      },
+    });
   });
 })();

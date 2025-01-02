@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf_token" content="{{ csrf_token() }}">
         <title>VR Slideshow</title>
         @vite(['resources/css/app.css'])
     </head>
@@ -30,7 +31,7 @@
                                     <span class="price"><span class="dollar">$</span>49</span>
                                     <span>10 images</span>
                                 </label>
-                                <input type="radio" id="select-basic" name="slideshow-type" value="basic" />
+                                <input type="radio" id="select-basic" name="slideshow_type" value="basic" />
                             </div>
                             <div class="radio">
                                 <label for="select-premium" class="small">
@@ -38,13 +39,13 @@
                                     <span class="price"><span class="dollar">$</span>99</span>
                                     <span>20 images</span>
                                 </label>
-                                <input type="radio" id="select-premium" name="slideshow-type" value="premium" />
+                                <input type="radio" id="select-premium" name="slideshow_type" value="premium" />
                             </div>
                         </fieldset>
                         <label for="slideshow-title"><span class="main-label">Title</span><span class="sub-label">Up to 50 characters.</span></label>
-                        <input name="slideshow-title" id="slideshow-title" type="text" placeholder="My Slideshow" max="50" />
+                        <input name="slideshow_title" id="slideshow-title" type="text" placeholder="My Slideshow" max="50" />
                         <label for="slideshow-opening-text"><span class="main-label">Opening Text</span><span class="sub-label">Up to 500 characters.</span></label>
-                        <textarea name="slideshow-opening-text" id="slideshow-opening-text" placeholder="My slideshow's opening text"></textarea>
+                        <textarea name="slideshow_opening_text" id="slideshow-opening-text" placeholder="My slideshow's opening text"></textarea>
                         <label for="slideshow-images"><span class="main-label">Images<span class="required">*</span></span><span class="sub-label">Up to <span class="max-filesize">1GB</span> (combined size).<br />Allowed formats: JPEG, GIF, PNG, TIFF.</span></label>
                         <div id="thumb-preview">
                             <div class="gallery">
@@ -53,12 +54,12 @@
                                         <img src="/img/plus.png" alt="Add images" title="Add images"/>
                                         <div id="images-remaining">10 images remaining</div>
                                     </label>
-                                    <input type='file' id="add-images" name="add-images" multiple required accept="image/png, image/jpeg, image/gif, image/tiff" />
+                                    <input type='file' id="add-images" name="add_images" multiple required accept="image/png, image/jpeg, image/gif, image/tiff" />
                                 </div>
                             </div>
                         </div>
                         <label for="slideshow-closing-text"><span class="main-label">Closing Text</span><span class="sub-label">Up to 500 characters.</span></label>
-                        <textarea name="slideshow-closing-text" id="slideshow-closing-text" placeholder="My slideshow's closing text"></textarea>
+                        <textarea name="slideshow_closing_text" id="slideshow-closing-text" placeholder="My slideshow's closing text"></textarea>
                     </div><!-- .content -->
                 </div><!-- .inner -->
             </div><!-- .section -->
@@ -94,7 +95,7 @@
                     <div class="content narrow">
                         <h2>Generate VRSlideshow</h2>
                         <label for="secret-code"><span class="main-label">Secret Code<span class="required">*</span></span></label>
-                        <input required name="secret-code" id="secret-code" type="text" placeholder="######" />
+                        <input required name="secret_code" id="secret-code" type="text" placeholder="######" />
                         <div id="validation-on-submit" class="fullwidth"></div>
                         <button type="submit" id="submit">Generate!</button>
                     </div><!-- .content -->
